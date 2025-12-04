@@ -9,6 +9,8 @@ import 'package:rentverse/common/screen/navigation_container.dart';
 import 'package:rentverse/core/services/service_locator.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupServiceLocator();
   runApp(const MyApp());
 }
 

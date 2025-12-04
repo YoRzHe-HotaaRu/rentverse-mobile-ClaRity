@@ -2,6 +2,6 @@
 
 class NoParams {}
 
-abstract class Usecase<T, Param> {
+abstract class UseCase<T, Param> {
   Future<T> call({Param? param});
 }

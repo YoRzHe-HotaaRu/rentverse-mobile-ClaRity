@@ -20,6 +20,20 @@ class UserModel extends UserEntity {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    // Build roles from either 'roles' array or fallback 'role' string
+    List<UserRoleModel>? parsedRoles;
+    if (json['roles'] != null) {
+      parsedRoles = (json['roles'] as List)
+          .whereType<Map<String, dynamic>>()
+          .map((e) => UserRoleModel.fromJson(e))
+          .toList();
+    } else if (json['role'] is String && (json['role'] as String).isNotEmpty) {
+      // Fallback: backend provided single role string
+      parsedRoles = [
+        UserRoleModel(role: RoleModel(name: json['role'] as String)),
+      ];
+    }
+
     return UserModel(
       id: json['id'] as String? ?? '',
       email: json['email'] as String? ?? '',
@@ -34,11 +48,7 @@ class UserModel extends UserEntity {
           : null,
 
       // Parse List Roles
-      roles: json['roles'] != null
-          ? (json['roles'] as List)
-                .map((e) => UserRoleModel.fromJson(e as Map<String, dynamic>))
-                .toList()
-          : null,
+      roles: parsedRoles,
 
       // Parse Tenant Profile (Nullable)
       tenantProfile: json['tenantProfile'] != null

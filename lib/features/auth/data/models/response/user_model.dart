@@ -21,33 +21,37 @@ class UserModel extends UserEntity {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'],
-      email: json['email'],
-      name: json['name'],
-      phone: json['phone'],
-      avatarUrl: json['avatarUrl'],
-      isVerified: json['isVerified'] ?? false,
+      id: json['id'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      name: json['name'] as String?,
+      phone: json['phone'] as String?,
+      avatarUrl: json['avatarUrl'] as String?,
+      isVerified: (json['isVerified'] as bool?) ?? false,
 
       // Parse DateTime
       createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'])
+          ? DateTime.tryParse(json['createdAt'] as String)
           : null,
 
       // Parse List Roles
       roles: json['roles'] != null
           ? (json['roles'] as List)
-                .map((e) => UserRoleModel.fromJson(e))
+                .map((e) => UserRoleModel.fromJson(e as Map<String, dynamic>))
                 .toList()
           : null,
 
       // Parse Tenant Profile (Nullable)
       tenantProfile: json['tenantProfile'] != null
-          ? TenantProfileModel.fromJson(json['tenantProfile'])
+          ? TenantProfileModel.fromJson(
+              json['tenantProfile'] as Map<String, dynamic>,
+            )
           : null,
 
       // Parse Landlord Profile (Nullable)
       landlordProfile: json['landlordProfile'] != null
-          ? LandlordProfileModel.fromJson(json['landlordProfile'])
+          ? LandlordProfileModel.fromJson(
+              json['landlordProfile'] as Map<String, dynamic>,
+            )
           : null,
     );
   }

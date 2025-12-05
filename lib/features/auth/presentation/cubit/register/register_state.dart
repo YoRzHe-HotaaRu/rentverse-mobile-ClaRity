@@ -9,6 +9,12 @@ class RegisterState extends Equatable {
   final RegisterStatus status;
   final String? errorMessage;
   final String role; // <--- Properti Baru untuk Role
+  // Inline field errors
+  final String? nameError;
+  final String? emailError;
+  final String? phoneError;
+  final String? passwordError;
+  final String? confirmPasswordError;
 
   const RegisterState({
     this.isPasswordVisible = false,
@@ -16,6 +22,11 @@ class RegisterState extends Equatable {
     this.status = RegisterStatus.initial,
     this.errorMessage,
     this.role = "TENANT", // Default Value
+    this.nameError,
+    this.emailError,
+    this.phoneError,
+    this.passwordError,
+    this.confirmPasswordError,
   });
 
   RegisterState copyWith({
@@ -24,6 +35,11 @@ class RegisterState extends Equatable {
     RegisterStatus? status,
     String? errorMessage,
     String? role, // <--- Add CopyWith
+    String? nameError,
+    String? emailError,
+    String? phoneError,
+    String? passwordError,
+    String? confirmPasswordError,
   }) {
     return RegisterState(
       isPasswordVisible: isPasswordVisible ?? this.isPasswordVisible,
@@ -32,6 +48,11 @@ class RegisterState extends Equatable {
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
       role: role ?? this.role,
+      nameError: nameError,
+      emailError: emailError,
+      phoneError: phoneError,
+      passwordError: passwordError,
+      confirmPasswordError: confirmPasswordError,
     );
   }
 
@@ -42,5 +63,10 @@ class RegisterState extends Equatable {
     status,
     errorMessage,
     role,
+    nameError,
+    emailError,
+    phoneError,
+    passwordError,
+    confirmPasswordError,
   ];
 }

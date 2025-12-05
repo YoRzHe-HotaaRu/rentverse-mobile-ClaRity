@@ -15,12 +15,13 @@ class ChooseRoleScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => ChooseRoleCubit(),
       child: Scaffold(
+        backgroundColor: appBackgroundColor,
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
-          title: const Text('Choose your role'),
+          // title: const Text('Choose your role'),
           centerTitle: false,
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -30,8 +31,18 @@ class ChooseRoleScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+
             children: [
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
+              Text(
+                'Select your role',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+              const SizedBox(height: 16),
               _roleCards(),
               const Spacer(),
               _registerButton(),
@@ -81,13 +92,16 @@ class ChooseRoleScreen extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: selected ? null : Border.all(color: Colors.grey.shade300),
+          // When selected: show thin gradient border, not a thick fill
           gradient: selected ? customLinearGradient : null,
         ),
-        padding: const EdgeInsets.all(16),
+        // Thin border effect when selected, normal padding otherwise
+        padding: EdgeInsets.all(selected ? 2 : 0),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
+            // Keep inner white card with subtle shadow-like appearance
           ),
           padding: const EdgeInsets.all(16),
           child: Column(

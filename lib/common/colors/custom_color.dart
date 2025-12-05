@@ -9,4 +9,5 @@ const LinearGradient customLinearGradient = LinearGradient(
 );
 const Color appPrimaryColor = Color(0xFF03E7AF); // Warna hijau tosca utama
 const Color appSecondaryColor = Color(0xFF0DA3F3); // Warna biru
+const Color appBackgroundColor = Color(0xFFFFFFFF); // Warna latar belakang aplikasi
 

@@ -55,25 +55,43 @@ class RegisterFormScreen extends StatelessWidget {
 
             // --- FULL NAME ---
             label("Full Name"),
-            CustomTextField(
-              controller: _nameController,
-              hintText: "Enter your Full Name",
+            BlocBuilder<RegisterCubit, RegisterState>(
+              buildWhen: (p, c) => p.nameError != c.nameError,
+              builder: (context, state) {
+                return CustomTextField(
+                  controller: _nameController,
+                  hintText: "Enter your Full Name",
+                  errorText: state.nameError,
+                );
+              },
             ),
 
             // --- EMAIL ---
             label("Email"),
-            CustomTextField(
-              controller: _emailController,
-              hintText: "Enter your email address",
-              keyboardType: TextInputType.emailAddress,
+            BlocBuilder<RegisterCubit, RegisterState>(
+              buildWhen: (p, c) => p.emailError != c.emailError,
+              builder: (context, state) {
+                return CustomTextField(
+                  controller: _emailController,
+                  hintText: "Enter your email address",
+                  keyboardType: TextInputType.emailAddress,
+                  errorText: state.emailError,
+                );
+              },
             ),
 
             // --- PHONE ---
             label("Phone Number"),
-            CustomTextField(
-              controller: _phoneController,
-              hintText: "Enter your phone number (e.g. 0812...)",
-              keyboardType: TextInputType.phone,
+            BlocBuilder<RegisterCubit, RegisterState>(
+              buildWhen: (p, c) => p.phoneError != c.phoneError,
+              builder: (context, state) {
+                return CustomTextField(
+                  controller: _phoneController,
+                  hintText: "Enter your phone number (e.g. 0812...)",
+                  keyboardType: TextInputType.phone,
+                  errorText: state.phoneError,
+                );
+              },
             ),
 
             // --- ROLE SELECTION REMOVED: will be chosen on next screen ---
@@ -86,6 +104,7 @@ class RegisterFormScreen extends StatelessWidget {
                   controller: _passwordController,
                   hintText: "Enter your password",
                   obscureText: !state.isPasswordVisible,
+                  errorText: state.passwordError,
                   suffixIcon: IconButton(
                     icon: Icon(
                       state.isPasswordVisible
@@ -109,6 +128,7 @@ class RegisterFormScreen extends StatelessWidget {
                   controller: _confirmPasswordController,
                   hintText: "Re-enter your password",
                   obscureText: !state.isConfirmPasswordVisible,
+                  errorText: state.confirmPasswordError,
                   suffixIcon: IconButton(
                     icon: Icon(
                       state.isConfirmPasswordVisible
@@ -147,6 +167,28 @@ class RegisterFormScreen extends StatelessWidget {
                   text: "Next",
                   isLoading: state.status == RegisterStatus.loading,
                   onTap: () async {
+                    // Front-end required field validation (inline)
+                    final name = _nameController.text.trim();
+                    final email = _emailController.text.trim();
+                    final phone = _phoneController.text.trim();
+                    final password = _passwordController.text;
+                    final confirmPassword = _confirmPasswordController.text;
+                    context.read<RegisterCubit>().validateFields(
+                      name: name,
+                      email: email,
+                      phone: phone,
+                      password: password,
+                      confirmPassword: confirmPassword,
+                    );
+                    final s = context.read<RegisterCubit>().state;
+                    if (s.nameError != null ||
+                        s.emailError != null ||
+                        s.phoneError != null ||
+                        s.passwordError != null ||
+                        s.confirmPasswordError != null) {
+                      return;
+                    }
+
                     // Navigate to choose role screen, then submit with selected role
                     final result = await Navigator.push<UserRole?>(
                       context,
@@ -163,11 +205,11 @@ class RegisterFormScreen extends StatelessWidget {
                     // update role into state, then submit
                     context.read<RegisterCubit>().updateRole(roleString);
                     await context.read<RegisterCubit>().submitRegister(
-                      name: _nameController.text,
-                      email: _emailController.text,
-                      phone: _phoneController.text,
-                      password: _passwordController.text,
-                      confirmPassword: _confirmPasswordController.text,
+                      name: name,
+                      email: email,
+                      phone: phone,
+                      password: password,
+                      confirmPassword: confirmPassword,
                     );
                   },
                 );

@@ -28,6 +28,48 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   // Update Parameter: Hapus 'role' dari parameter karena kita ambil dari State
+  void validateFields({
+    required String name,
+    required String email,
+    required String phone,
+    required String password,
+    required String confirmPassword,
+  }) {
+    String? nameError;
+    String? emailError;
+    String? phoneError;
+    String? passwordError;
+    String? confirmError;
+
+    if (name.trim().isEmpty) {
+      nameError = "Full Name cannot be empty";
+    }
+    if (email.trim().isEmpty) {
+      emailError = "Email cannot be empty";
+    }
+    if (phone.trim().isEmpty) {
+      phoneError = "Phone Number cannot be empty";
+    }
+    if (password.isEmpty) {
+      passwordError = "Password cannot be empty";
+    }
+    if (confirmPassword.isEmpty) {
+      confirmError = "Confirm Password cannot be empty";
+    } else if (password != confirmPassword) {
+      confirmError = "Passwords do not match";
+    }
+
+    emit(
+      state.copyWith(
+        nameError: nameError,
+        emailError: emailError,
+        phoneError: phoneError,
+        passwordError: passwordError,
+        confirmPasswordError: confirmError,
+      ),
+    );
+  }
+
   Future<void> submitRegister({
     required String name,
     required String email,
@@ -35,13 +77,19 @@ class RegisterCubit extends Cubit<RegisterState> {
     required String confirmPassword,
     required String phone,
   }) async {
-    if (password != confirmPassword) {
-      emit(
-        state.copyWith(
-          status: RegisterStatus.failure,
-          errorMessage: "Passwords do not match",
-        ),
-      );
+    // If there are visible validation errors, do not submit
+    validateFields(
+      name: name,
+      email: email,
+      phone: phone,
+      password: password,
+      confirmPassword: confirmPassword,
+    );
+    if (state.nameError != null ||
+        state.emailError != null ||
+        state.phoneError != null ||
+        state.passwordError != null ||
+        state.confirmPasswordError != null) {
       return;
     }
 

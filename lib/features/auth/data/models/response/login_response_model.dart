@@ -9,8 +9,10 @@ class LoginResponseModel {
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
-      token: json['token'] ?? '', // Ambil token di sini
-      user: UserModel.fromJson(json), // Ambil user sisanya
+      token: (json['accessToken'] ?? json['token']) ?? '',
+      user: UserModel.fromJson(
+        (json['user'] as Map<String, dynamic>? ?? <String, dynamic>{}),
+      ),
     );
   }
 }

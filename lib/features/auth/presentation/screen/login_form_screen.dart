@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../common/colors/custom_color.dart';
 import '../cubit/auth/auth_page_cubit.dart';
+import '../../../../common/bloc/auth/auth_cubit.dart';
 import '../cubit/login/login_cubit.dart';
 import '../cubit/login/login_state.dart';
 import '../widget/custom_button.dart';
@@ -131,7 +132,8 @@ class LoginFormScreen extends StatelessWidget {
           BlocConsumer<LoginCubit, LoginState>(
             listener: (context, state) {
               if (state.status == LoginStatus.success) {
-                // Navigate to Home
+                // Refresh auth status to navigate to home
+                context.read<AuthCubit>().checkAuthStatus();
               } else if (state.status == LoginStatus.failure) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(state.errorMessage ?? "Error")),

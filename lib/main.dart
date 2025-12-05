@@ -8,6 +8,7 @@ import 'package:rentverse/common/bloc/navigation/navigation_cubit.dart';
 import 'package:rentverse/common/screen/navigation_container.dart';
 import 'package:rentverse/core/services/service_locator.dart';
 import 'package:rentverse/features/auth/presentation/pages/auth_pages.dart';
+import 'package:rentverse/common/colors/custom_color.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(
           primarySwatch: Colors.blue,
-          scaffoldBackgroundColor: Color(0xFFEBF0FD),
+          scaffoldBackgroundColor: appBackgroundColor,
 
           // scaffoldBackgroundColor: Colors.white,
         ),

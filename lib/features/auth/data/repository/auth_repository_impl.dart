@@ -30,9 +30,11 @@ class AuthRepositoryImpl implements AuthRepository {
       if (httpResponse.data != null) {
         final loginData = httpResponse.data!;
 
-        // 3. LOGIC PENTING: Simpan Token dan User secara terpisah
-        // Simpan Token (untuk Interceptor)
-        await _localDataSource.saveToken(loginData.token);
+        // 3. LOGIC PENTING: Simpan Token (access + refresh) dan User secara terpisah
+        await _localDataSource.saveTokens(
+          accessToken: loginData.accessToken,
+          refreshToken: loginData.refreshToken,
+        );
 
         // Simpan User Profile (untuk UI/Role)
         await _localDataSource.saveUser(loginData.user);

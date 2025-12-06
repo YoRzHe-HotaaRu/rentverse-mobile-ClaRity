@@ -1,0 +1,93 @@
+
+{
+	"ref_property_types": [
+		{ "id": 1, "slug": "apartment", "label": "Apartment" },
+		{ "id": 2, "slug": "house", "label": "House" }
+	],
+
+	"ref_listing_types": [
+		{ "id": 1, "slug": "rent", "label": "Rent" },
+		{ "id": 2, "slug": "sale", "label": "Sale" }
+	],
+
+	"ref_billing_periods": [
+		{ "id": 1, "slug": "monthly", "label": "Monthly", "durationMonths": 1 },
+		{ "id": 2, "slug": "yearly", "label": "Yearly", "durationMonths": 12 }
+	],
+
+	"ref_property_attribute_types": [
+		{ "id": 1, "slug": "bedroom", "label": "Bedroom", "dataType": "NUMBER" },
+		{ "id": 2, "slug": "bathroom", "label": "Bathroom", "dataType": "NUMBER" },
+		{ "id": 3, "slug": "area", "label": "Area (sqm)", "dataType": "NUMBER" }
+	],
+
+	"properties": [
+		{
+			"id": "prop-001",
+			"landlordId": "landlord-1",
+			"title": "Sunrise Apartment - 2BR",
+			"description": "Sunny 2-bedroom apartment with city view and balcony.",
+			"propertyTypeId": 1,
+			"listingTypeId": 1,
+			"amenities": ["WIFI", "AC", "ELEVATOR"],
+			"address": "Jl. Example No.1",
+			"city": "Jakarta",
+			"country": "Indonesia",
+			"latitude": -6.2001,
+			"longitude": 106.8166,
+			"price": 6500000.00,
+			"currency": "IDR",
+			"isVerified": true,
+			"metadata": { "floor": 8, "unit": "B" },
+			"createdAt": "2025-06-01T08:00:00Z",
+			"updatedAt": "2025-06-02T09:00:00Z"
+		},
+
+		{
+			"id": "prop-002",
+			"landlordId": "landlord-1",
+			"title": "Green Villa - Family House",
+			"description": "Cozy 3-bedroom house with garden and carport.",
+			"propertyTypeId": 2,
+			"listingTypeId": 1,
+			"amenities": ["GARDEN", "CARPORT"],
+			"address": "Perumahan Contoh Blok C",
+			"city": "Bandung",
+			"country": "Indonesia",
+			"latitude": -6.9147,
+			"longitude": 107.6098,
+			"price": 11000000.00,
+			"currency": "IDR",
+			"isVerified": false,
+			"metadata": { "land_area_sqm": 150 },
+			"createdAt": "2025-05-20T10:00:00Z",
+			"updatedAt": null
+		}
+	],
+
+	"property_images": [
+		{ "id": "img-1", "propertyId": "prop-001", "url": "assets/banner.png", "isPrimary": true },
+		{ "id": "img-2", "propertyId": "prop-001", "url": "assets/banner1.png", "isPrimary": false },
+		{ "id": "img-3", "propertyId": "prop-001", "url": "assets/banner2.png", "isPrimary": false },
+
+		{ "id": "img-4", "propertyId": "prop-002", "url": "assets/banner1.png", "isPrimary": true },
+		{ "id": "img-5", "propertyId": "prop-002", "url": "assets/banner2.png", "isPrimary": false }
+	],
+
+	"property_attributes": [
+		{ "id": "pa-1", "propertyId": "prop-001", "attributeTypeId": 1, "value": "2" },
+		{ "id": "pa-2", "propertyId": "prop-001", "attributeTypeId": 2, "value": "1" },
+		{ "id": "pa-3", "propertyId": "prop-001", "attributeTypeId": 3, "value": "68" },
+
+		{ "id": "pa-4", "propertyId": "prop-002", "attributeTypeId": 1, "value": "3" },
+		{ "id": "pa-5", "propertyId": "prop-002", "attributeTypeId": 2, "value": "2" },
+		{ "id": "pa-6", "propertyId": "prop-002", "attributeTypeId": 3, "value": "140" }
+	],
+
+	"property_billing_periods": [
+		{ "propertyId": "prop-001", "billingPeriodId": 1 },
+		{ "propertyId": "prop-002", "billingPeriodId": 1 }
+	]
+
+}
+

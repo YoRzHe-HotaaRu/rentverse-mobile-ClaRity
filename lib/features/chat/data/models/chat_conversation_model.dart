@@ -9,6 +9,7 @@ class ChatConversationModel {
   final String? otherUserAvatar;
   final String lastMessage;
   final DateTime lastMessageAt;
+  final int unreadCount;
 
   const ChatConversationModel({
     required this.id,
@@ -19,6 +20,7 @@ class ChatConversationModel {
     required this.otherUserAvatar,
     required this.lastMessage,
     required this.lastMessageAt,
+    this.unreadCount = 0,
   });
 
   factory ChatConversationModel.fromJson(Map<String, dynamic> json) {
@@ -57,6 +59,7 @@ class ChatConversationModel {
       lastMessageAt: _parseDate(
         data['lastMessageAt'] ?? data['last_message_at'],
       ),
+      unreadCount: _parseUnreadCount(data),
     );
   }
 
@@ -70,6 +73,7 @@ class ChatConversationModel {
       otherUserAvatar: otherUserAvatar,
       lastMessage: lastMessage,
       lastMessageAt: lastMessageAt,
+      unreadCount: unreadCount,
     );
   }
 
@@ -86,5 +90,15 @@ class ChatConversationModel {
       }
     }
     return DateTime.now();
+  }
+
+  static int _parseUnreadCount(Map<String, dynamic> data) {
+    final value = data['unreadCount'] ?? data['unread_count'] ?? data['unread'];
+    if (value is int) return value;
+    if (value is String) {
+      final parsed = int.tryParse(value);
+      if (parsed != null) return parsed;
+    }
+    return 0;
   }
 }

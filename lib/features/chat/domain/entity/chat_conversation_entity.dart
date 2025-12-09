@@ -7,6 +7,7 @@ class ChatConversationEntity {
   final String? otherUserAvatar;
   final String lastMessage;
   final DateTime lastMessageAt;
+  final int unreadCount;
 
   const ChatConversationEntity({
     required this.id,
@@ -17,5 +18,6 @@ class ChatConversationEntity {
     required this.otherUserAvatar,
     required this.lastMessage,
     required this.lastMessageAt,
+    this.unreadCount = 0,
   });
 }

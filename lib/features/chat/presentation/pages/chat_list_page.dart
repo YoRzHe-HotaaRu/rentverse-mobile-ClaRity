@@ -55,10 +55,6 @@ class _ChatListPageState extends State<ChatListPage> {
 
             final filtered = _filterChats(state.conversations);
 
-            if (filtered.isEmpty) {
-              return const Center(child: Text('Belum ada percakapan'));
-            }
-
             return SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -79,14 +75,17 @@ class _ChatListPageState extends State<ChatListPage> {
                     ),
                     const SizedBox(height: 12),
                     Expanded(
-                      child: ListView.separated(
-                        itemCount: filtered.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          final conversation = filtered[index];
-                          return _ChatTile(conversation: conversation);
-                        },
-                      ),
+                      child: filtered.isEmpty
+                          ? const Center(child: Text('Belum ada percakapan'))
+                          : ListView.separated(
+                              itemCount: filtered.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: 12),
+                              itemBuilder: (context, index) {
+                                final conversation = filtered[index];
+                                return _ChatTile(conversation: conversation);
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -111,13 +110,15 @@ class _ChatListPageState extends State<ChatListPage> {
           c.lastMessage.toLowerCase().contains(query);
 
       // TODO: replace placeholder filter logic when read/unread status is available
+      final hasUnread = c.unreadCount > 0;
+
       switch (_selectedFilter) {
         case ChatFilter.all:
           return matchesQuery;
         case ChatFilter.unread:
-          return matchesQuery;
+          return matchesQuery && hasUnread;
         case ChatFilter.read:
-          return matchesQuery;
+          return matchesQuery && !hasUnread;
       }
     }).toList();
 
@@ -133,7 +134,7 @@ class _ChatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final timeLabel = DateFormat('hh:mm a').format(conversation.lastMessageAt);
-    final showUnreadDot = conversation.lastMessage.isNotEmpty;
+    final showUnreadDot = conversation.unreadCount > 0;
 
     return GestureDetector(
       onTap: () {

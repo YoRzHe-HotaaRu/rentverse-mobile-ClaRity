@@ -386,6 +386,8 @@ Future<void> _handlePayment(
       builder: (_) => MidtransPaymentPage(
         booking: booking,
         redirectUrl: payment.redirectUrl,
+        snapToken: payment.token,
+        clientKey: payment.clientKey,
       ),
     ),
   );

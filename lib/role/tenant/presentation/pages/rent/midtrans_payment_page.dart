@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:rentverse/core/constant/api_urls.dart';
 import 'package:rentverse/features/bookings/domain/entity/res/booking_response_entity.dart';
 import 'package:rentverse/role/tenant/presentation/widget/midtrans/card_property.dart';
 import 'package:rentverse/role/tenant/presentation/widget/receipt_booking/property_rent_details.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:rentverse/role/tenant/presentation/pages/rent/midtrans_payment_snap_page.dart';
 
 class MidtransPaymentPage extends StatefulWidget {
   const MidtransPaymentPage({
     super.key,
     required this.booking,
     required this.redirectUrl,
+    required this.snapToken,
+    required this.clientKey,
   });
 
   final BookingResponseEntity booking;
   final String redirectUrl;
+  final String snapToken;
+  final String clientKey;
 
   @override
   State<MidtransPaymentPage> createState() => _MidtransPaymentPageState();
@@ -23,6 +28,7 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
   String _selectedOnline = 'Online Virtual Account';
   String _selectedBank = 'Bank BRI';
   String _selectedAtm = 'ATM Virtual Account';
+  bool _isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +171,7 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
                         borderRadius: BorderRadius.circular(24),
                       ),
                     ),
-                    onPressed: _launchPayment,
+                    onPressed: _isProcessing ? null : _openSnap,
                     child: const Text(
                       'Pay Now',
                       style: TextStyle(
@@ -183,16 +189,29 @@ class _MidtransPaymentPageState extends State<MidtransPaymentPage> {
     );
   }
 
-  Future<void> _launchPayment() async {
-    final uri = Uri.tryParse(widget.redirectUrl);
-    if (uri == null) {
-      _showSnack('Invalid payment URL');
+  Future<void> _openSnap() async {
+    final clientKey = widget.clientKey.isNotEmpty
+        ? widget.clientKey
+        : ApiConstants.midtransClientKey;
+
+    if (widget.snapToken.isEmpty || clientKey.isEmpty) {
+      _showSnack('Token atau client key tidak valid');
       return;
     }
 
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      _showSnack('Cannot open payment link');
-    }
+    setState(() => _isProcessing = true);
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MidtransPaymentSnapPage(
+          token: widget.snapToken,
+          clientKey: clientKey,
+          redirectUrl: widget.redirectUrl,
+        ),
+      ),
+    );
+
+    if (mounted) setState(() => _isProcessing = false);
   }
 
   void _showSnack(String message) {

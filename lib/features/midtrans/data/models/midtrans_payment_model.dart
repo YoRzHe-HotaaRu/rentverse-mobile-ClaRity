@@ -5,12 +5,14 @@ class MidtransPaymentModel {
   final String token;
   final String redirectUrl;
   final String status;
+  final String clientKey;
   final String? message;
 
   const MidtransPaymentModel({
     required this.token,
     required this.redirectUrl,
     required this.status,
+    required this.clientKey,
     this.message,
   });
 
@@ -24,6 +26,11 @@ class MidtransPaymentModel {
           data['redirectUrl']?.toString() ??
           '',
       status: json['status']?.toString() ?? '',
+      clientKey:
+          data['client_key']?.toString() ??
+          data['clientKey']?.toString() ??
+          json['client_key']?.toString() ??
+          '',
       message: json['message']?.toString(),
     );
   }
@@ -33,6 +40,7 @@ class MidtransPaymentModel {
       token: token,
       redirectUrl: redirectUrl,
       status: status,
+      clientKey: clientKey,
       message: message,
     );
   }

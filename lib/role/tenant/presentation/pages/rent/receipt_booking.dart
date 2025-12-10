@@ -34,6 +34,8 @@ class ReceiptBookingPage extends StatelessWidget {
                   builder: (_) => MidtransPaymentPage(
                     booking: state.response,
                     redirectUrl: state.payment!.redirectUrl,
+                    snapToken: state.payment!.token,
+                    clientKey: state.payment!.clientKey,
                   ),
                 ),
               );
@@ -116,6 +118,10 @@ class ReceiptBookingPage extends StatelessWidget {
                             _Row(
                               label: 'Redirect URL',
                               value: state.payment!.redirectUrl,
+                            ),
+                            _Row(
+                              label: 'Client Key',
+                              value: state.payment!.clientKey,
                             ),
                           ],
                         ),

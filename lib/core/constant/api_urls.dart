@@ -7,4 +7,7 @@ class ApiConstants {
       'https://beetle-sincere-obviously.ngrok-free.app/api/v1'; // Ganti dengan URL API kamu
   static const String tokenKey = 'access_token'; // Key untuk Shared Preferences
   static const String refreshTokenKey = 'refresh_token';
+  // Midtrans keys (fallbacks for Snap client-side usage)
+  static const String midtransClientKey = 'Mid-client--6t_PVMPXINyqzc6';
+  static const String midtransServerKey = 'Mid-server-RQZfLpJ5vgEp9ouiiVCOheGr';
 }

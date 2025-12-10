@@ -30,4 +30,16 @@ class BookingsRepositoryImpl implements BookingsRepository {
     );
     return response.toEntity();
   }
+
+  @override
+  Future<BookingResponseEntity> confirmBooking(String bookingId) async {
+    final response = await _apiService.confirmBooking(bookingId);
+    return response.toEntity();
+  }
+
+  @override
+  Future<BookingResponseEntity> rejectBooking(String bookingId) async {
+    final response = await _apiService.rejectBooking(bookingId);
+    return response.toEntity();
+  }
 }

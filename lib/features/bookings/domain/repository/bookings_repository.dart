@@ -5,4 +5,6 @@ import 'package:rentverse/features/bookings/domain/entity/res/booking_response_e
 abstract class BookingsRepository {
   Future<BookingResponseEntity> createBooking(RequestBookingEntity request);
   Future<BookingListEntity> getBookings({int limit, String? cursor});
+  Future<BookingResponseEntity> confirmBooking(String bookingId);
+  Future<BookingResponseEntity> rejectBooking(String bookingId);
 }

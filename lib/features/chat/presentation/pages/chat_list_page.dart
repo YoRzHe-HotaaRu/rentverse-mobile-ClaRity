@@ -44,7 +44,7 @@ class _ChatListPageState extends State<ChatListPage> {
       )..load(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.isLandlord ? 'Chat (Landlord)' : 'Chat'),
+          title: Text(widget.isLandlord ? 'Chat' : 'Chat'),
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.white,

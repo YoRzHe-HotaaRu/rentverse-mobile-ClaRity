@@ -22,6 +22,8 @@ import 'package:rentverse/features/bookings/data/source/booking_api_service.dart
 import 'package:rentverse/features/bookings/domain/repository/bookings_repository.dart';
 import 'package:rentverse/features/bookings/domain/usecase/create_booking_usecase.dart';
 import 'package:rentverse/features/bookings/domain/usecase/get_bookings_usecase.dart';
+import 'package:rentverse/features/bookings/domain/usecase/confirm_booking_usecase.dart';
+import 'package:rentverse/features/bookings/domain/usecase/reject_booking_usecase.dart';
 import 'package:rentverse/features/map/data/repository/map_repository_impl.dart';
 import 'package:rentverse/features/map/data/source/open_map_remote_data_source.dart';
 import 'package:rentverse/features/map/domain/repository/map_repository.dart';
@@ -179,6 +181,12 @@ Future<void> setupServiceLocator() async {
   // Booking usecases
   sl.registerLazySingleton(
     () => CreateBookingUseCase(sl<BookingsRepository>()),
+  );
+  sl.registerLazySingleton(
+    () => ConfirmBookingUseCase(sl<BookingsRepository>()),
+  );
+  sl.registerLazySingleton(
+    () => RejectBookingUseCase(sl<BookingsRepository>()),
   );
   sl.registerLazySingleton(() => SubmitKycUseCase(sl<KycRepository>()));
   sl.registerLazySingleton(

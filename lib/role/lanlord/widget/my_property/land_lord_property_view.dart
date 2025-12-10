@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:rentverse/role/lanlord/widget/my_property/listing_tab.dart';
+import 'package:rentverse/role/lanlord/widget/my_property/payment_tab.dart';
+import 'package:rentverse/role/lanlord/widget/my_property/paid_tab.dart';
+import 'package:rentverse/role/lanlord/widget/my_property/confirmed_tab.dart';
+import 'package:rentverse/role/lanlord/widget/my_property/request_tab.dart';
+import 'package:rentverse/role/lanlord/widget/my_property/rejected_tab.dart';
 import 'package:rentverse/role/lanlord/widget/my_property/submission_tab.dart';
 import 'package:rentverse/role/lanlord/presentation/pages/part_add_property.dart';
 
@@ -36,7 +41,10 @@ class LandLordPropertyView extends StatelessWidget {
             Tab(text: 'Submission'),
             Tab(text: 'My Listing'),
             Tab(text: 'Request'),
+            Tab(text: 'Confirmed'),
             Tab(text: 'Payment'),
+            Tab(text: 'Paid'),
+            Tab(text: 'Rejected'),
           ],
         ),
       ),
@@ -44,8 +52,11 @@ class LandLordPropertyView extends StatelessWidget {
         children: const [
           SubmissionTab(),
           ListingTab(),
-          _PlaceholderTab(label: 'Request'),
-          _PlaceholderTab(label: 'Payment'),
+          RequestTab(),
+          ConfirmedTab(),
+          PaymentTab(),
+          PaidTab(),
+          RejectedTab(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -58,16 +69,5 @@ class LandLordPropertyView extends StatelessWidget {
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
-  }
-}
-
-class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('$label is coming soon'));
   }
 }

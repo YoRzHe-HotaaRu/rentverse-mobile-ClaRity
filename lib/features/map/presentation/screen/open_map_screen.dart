@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -23,55 +25,101 @@ class OpenMapScreen extends StatefulWidget {
 
 class _OpenMapScreenState extends State<OpenMapScreen> {
   late LatLng _center;
+  late final MapController _mapController;
+  // small debounce to avoid spamming reverse geocode while user pans
+  Timer? _debounce;
+  late final ReverseGeocodeCubit _reverseCubit;
 
   @override
   void initState() {
     super.initState();
     _center = LatLng(widget.initialLat, widget.initialLon);
+    _mapController = MapController();
+    _reverseCubit = ReverseGeocodeCubit(sl())
+      ..fetch(_center.latitude, _center.longitude);
+    // initial fetch done above; we'll trigger further fetches from onPositionChanged
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _reverseCubit.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          ReverseGeocodeCubit(sl())..fetch(_center.latitude, _center.longitude),
+    return BlocProvider.value(
+      value: _reverseCubit,
       child: Scaffold(
         appBar: AppBar(title: const Text('OpenStreetMap Preview')),
         body: Column(
           children: [
             Expanded(
-              child: FlutterMap(
-                options: MapOptions(
-                  initialCenter: _center,
-                  initialZoom: 14,
-                  onTap: (tapPosition, point) {
-                    setState(() => _center = point);
-                    context.read<ReverseGeocodeCubit>().fetch(
-                      point.latitude,
-                      point.longitude,
-                    );
-                  },
-                ),
+              child: Stack(
                 children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    subdomains: const ['a', 'b', 'c'],
-                    userAgentPackageName: 'com.example.rentverse',
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        point: _center,
-                        width: 44,
-                        height: 44,
-                        child: const Icon(
-                          Icons.location_pin,
-                          size: 44,
-                          color: appSecondaryColor,
-                        ),
+                  FlutterMap(
+                    mapController: _mapController,
+                    options: MapOptions(
+                      initialCenter: _center,
+                      initialZoom: 14,
+                      // also update center quickly for smoother marker
+                      onPositionChanged: (pos, hasGesture) {
+                        final newCenter = pos.center;
+                        setState(() => _center = newCenter);
+                        // When user is panning (hasGesture == true) debounce the fetch
+                        _debounce?.cancel();
+                        if (hasGesture) {
+                          _debounce = Timer(
+                            const Duration(milliseconds: 600),
+                            () {
+                              _reverseCubit.fetch(
+                                _center.latitude,
+                                _center.longitude,
+                              );
+                            },
+                          );
+                        } else {
+                          // immediate fetch when movement ends
+                          _reverseCubit.fetch(
+                            _center.latitude,
+                            _center.longitude,
+                          );
+                        }
+                      },
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        subdomains: const ['a', 'b', 'c'],
+                        userAgentPackageName: 'com.example.rentverse',
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: _center,
+                            width: 44,
+                            height: 44,
+                            child: const Icon(
+                              Icons.location_pin,
+                              size: 44,
+                              color: appSecondaryColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
+                  ),
+                  // center crosshair overlay so user knows exact selected point
+                  IgnorePointer(
+                    child: Center(
+                      child: Icon(
+                        Icons.add_location_alt,
+                        size: 36,
+                        color: Colors.black26,
+                      ),
+                    ),
                   ),
                 ],
               ),

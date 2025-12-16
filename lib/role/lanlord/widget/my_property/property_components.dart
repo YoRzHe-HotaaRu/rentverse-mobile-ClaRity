@@ -192,41 +192,33 @@ class PropertyImage extends StatelessWidget {
           width: 110,
           height: 80,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _PlaceholderBox(title: title),
+          errorBuilder: (_, __, ___) => const _PlaceholderBox(),
         ),
       );
     }
 
-    return _PlaceholderBox(title: title);
+    return const _PlaceholderBox();
   }
 }
 
 class _PlaceholderBox extends StatelessWidget {
-  const _PlaceholderBox({required this.title});
-
-  final String title;
+  const _PlaceholderBox();
 
   @override
   Widget build(BuildContext context) {
-    final initial = title.isNotEmpty
-        ? title.characters.first.toUpperCase()
-        : '-';
     return Container(
       width: 110,
       height: 80,
       decoration: BoxDecoration(
-        color: const Color(0xFFE7F9F8),
+        color: const Color(0xFFF5F5F5),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF1CD8D2)),
+        border: Border.all(color: Colors.grey.shade300),
       ),
       alignment: Alignment.center,
-      child: Text(
-        initial,
-        style: const TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w800,
-          color: Color(0xFF0C7B77),
-        ),
+      child: Icon(
+        Icons.image_not_supported_outlined,
+        color: Colors.grey.shade400,
+        size: 32,
       ),
     );
   }

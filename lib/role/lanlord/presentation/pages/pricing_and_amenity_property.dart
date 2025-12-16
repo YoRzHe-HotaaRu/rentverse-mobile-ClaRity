@@ -36,11 +36,7 @@ class _PricingAndAmenityPropertyPageState
     {'id': 4, 'label': 'At least one year'},
   ];
 
-  static const _listingOptions = [
-    {'id': 1, 'label': 'Rent'},
-    {'id': 2, 'label': 'Sell'},
-    {'id': 3, 'label': 'Both sell & rent'},
-  ];
+
 
   @override
   void initState() {
@@ -67,43 +63,73 @@ class _PricingAndAmenityPropertyPageState
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
-        title: const Text('Pricing & Amenity Details'),
+        title: const Text(
+          'Pricing & Amenity Details',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
+      backgroundColor: Colors.white,
       body: BlocBuilder<AddPropertyCubit, AddPropertyState>(
         builder: (context, state) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'How is your unit available?',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _furnishingOptions
-                      .map(
-                        (opt) => ChoiceChip(
-                          label: Text(opt),
-                          selected: _furnishing == opt,
-                          onSelected: (_) {
-                            setState(() => _furnishing = opt);
-                            _pushChanges();
-                          },
+                _buildSectionTitle('Furnishing Status'),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 50,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _furnishingOptions.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    itemBuilder: (context, index) {
+                      final opt = _furnishingOptions[index];
+                      final isSelected = _furnishing == opt;
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() => _furnishing = opt);
+                          _pushChanges();
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? appPrimaryColor.withOpacity(0.1)
+                                : Colors.grey[50],
+                            border: Border.all(
+                              color: isSelected
+                                  ? appSecondaryColor
+                                  : Colors.grey[300]!,
+                              width: isSelected ? 1.5 : 1,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            opt,
+                            style: TextStyle(
+                              color: isSelected ? appSecondaryColor : Colors.black,
+                              fontWeight:
+                                  isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
                         ),
-                      )
-                      .toList(),
+                      );
+                    },
+                  ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 _TagEditor(
-                  title: 'What are the features of your property?',
+                  title: 'Property Features',
                   values: _features,
                   onChanged: (vals) {
                     setState(() => _features = vals);
@@ -115,9 +141,9 @@ class _PricingAndAmenityPropertyPageState
                     'Swimming Pool',
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 _TagEditor(
-                  title: 'Nearby facilities',
+                  title: 'Nearby Facilities',
                   values: _facilities,
                   onChanged: (vals) {
                     setState(() => _facilities = vals);
@@ -125,9 +151,9 @@ class _PricingAndAmenityPropertyPageState
                   },
                   suggestions: const ['Train Station', 'Bus Station'],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 _TagEditor(
-                  title: 'What are the views of your property?',
+                  title: 'Property Views',
                   values: _views,
                   onChanged: (vals) {
                     setState(() => _views = vals);
@@ -139,94 +165,162 @@ class _PricingAndAmenityPropertyPageState
                     'City View',
                   ],
                 ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Are you looking to sell or rent your property?',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-                ..._listingOptions.map(
-                  (opt) => RadioListTile<int>(
-                    value: opt['id'] as int,
-                    groupValue: _listingTypeId,
-                    onChanged: (val) {
-                      if (val == null) return;
-                      setState(() => _listingTypeId = val);
-                      _pushChanges();
-                    },
-                    title: Text(opt['label'] as String),
-                    dense: true,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Are you looking to sell or rent your property?',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-                ..._billingOptions.map(
-                  (opt) {
+                const SizedBox(height: 24),
+                _buildSectionTitle('Billing Period'),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: _billingOptions.map((opt) {
                     final id = opt['id'] as int;
                     final isSelected = _billingPeriodIds.contains(id);
-                    return CheckboxListTile(
-                      value: isSelected,
-                      onChanged: (val) {
+                    return GestureDetector(
+                      onTap: () {
                         setState(() {
-                          if (val == true) {
-                            _billingPeriodIds.add(id);
+                          if (isSelected) {
+                            if (_billingPeriodIds.length > 1) {
+                                _billingPeriodIds.remove(id);
+                            }
                           } else {
-                            _billingPeriodIds.remove(id);
+                            _billingPeriodIds.add(id);
                           }
                         });
                         _pushChanges();
                       },
-                      title: Text(opt['label'] as String),
-                      dense: true,
-                      controlAffinity: ListTileControlAffinity.leading,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? appPrimaryColor.withOpacity(0.1)
+                              : Colors.white,
+                          border: Border.all(
+                            color: isSelected
+                                ? appSecondaryColor
+                                : Colors.grey.shade300,
+                            width: isSelected ? 1.5 : 1,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          opt['label'] as String,
+                          style: TextStyle(
+                            color: isSelected
+                                ? appSecondaryColor
+                                : Colors.grey.shade700,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ),
                     );
-                  },
+                  }).toList(),
                 ),
+                const SizedBox(height: 24),
+                _buildSectionTitle('Price (Rp)'),
                 const SizedBox(height: 12),
-                const Text(
-                  'Price (Rp)',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 6),
                 TextField(
                   controller: _priceController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    hintText: '1.000.000',
+                    hintText: 'e.g. 5.000.000',
+                    prefixIcon: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Text(
+                          'Rp ',
+                          style: TextStyle(
+                            color: appSecondaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: appSecondaryColor.withOpacity(0.3)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          const BorderSide(color: appSecondaryColor, width: 2),
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 12,
-                    ),
+                        borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: Colors.grey[50],
+                    contentPadding: const EdgeInsets.all(16),
                   ),
                   onChanged: (_) => _pushChanges(),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton(
-                        onPressed: _reset,
-                        child: const Text('Reset'),
+                      child: Container(
+                        height: 52,
+                        decoration: BoxDecoration(
+                          gradient: customLinearGradient,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Container(
+                          margin: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: _reset,
+                              borderRadius: BorderRadius.circular(10),
+                              child: const Center(
+                                child: Text(
+                                  'Reset',
+                                  style: TextStyle(
+                                    color: appSecondaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 16),
                     Expanded(
-                      child: ElevatedButton(
-                        onPressed: _save,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: appPrimaryColor,
+                      child: Container(
+                        height: 52,
+                        decoration: BoxDecoration(
+                          gradient: customLinearGradient,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Text('Save'),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _save,
+                            borderRadius: BorderRadius.circular(12),
+                            child: const Center(
+                              child: Text(
+                                'Save',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 24),
               ],
             ),
           );
@@ -235,16 +329,27 @@ class _PricingAndAmenityPropertyPageState
     );
   }
 
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: Colors.black87,
+      ),
+    );
+  }
+
   void _pushChanges() {
     context.read<AddPropertyCubit>().updatePricing(
-      furnishing: _furnishing,
-      features: _features,
-      facilities: _facilities,
-      views: _views,
-      billingPeriodIds: _billingPeriodIds,
-      price: _priceController.text,
-      listingTypeId: _listingTypeId,
-    );
+          furnishing: _furnishing,
+          features: _features,
+          facilities: _facilities,
+          views: _views,
+          billingPeriodIds: _billingPeriodIds,
+          price: _priceController.text,
+          listingTypeId: _listingTypeId,
+        );
   }
 
   void _reset() {
@@ -257,6 +362,7 @@ class _PricingAndAmenityPropertyPageState
       _views = List<String>.from(state.views);
       _billingPeriodIds = List<int>.from(state.billingPeriodIds);
       if (_billingPeriodIds.isEmpty) _billingPeriodIds.add(1);
+      // listingTypeId reset logic kept but hidden from UI
       _listingTypeId = state.listingTypeId;
       _priceController.text = state.price;
     });
@@ -264,9 +370,9 @@ class _PricingAndAmenityPropertyPageState
 
   void _save() {
     _pushChanges();
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Pricing & amenities saved')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Pricing & amenities saved')),
+    );
     Navigator.of(context).maybePop();
   }
 }
@@ -317,58 +423,133 @@ class _TagEditorState extends State<_TagEditor> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.title, style: const TextStyle(fontWeight: FontWeight.w700)),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _current
-              .map(
-                (e) => InputChip(label: Text(e), onDeleted: () => _remove(e)),
-              )
-              .toList(),
+        Text(
+          widget.title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: Colors.black87,
+          ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
+        if (_current.isNotEmpty) ...[
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _current.map((e) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: appPrimaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: appSecondaryColor.withOpacity(0.2)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      e,
+                      style: const TextStyle(
+                        color: appSecondaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    GestureDetector(
+                      onTap: () => _remove(e),
+                      child: const Icon(Icons.close,
+                          size: 16, color: appSecondaryColor),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 12),
+        ],
         Row(
           children: [
             Expanded(
-              child: TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  hintText: 'Add item',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 12,
+              child: SizedBox(
+                height: 48,
+                child: TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    hintText: 'Add new item...',
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 0),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: Colors.grey.withOpacity(0.3)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: appSecondaryColor),
+                    ),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: Colors.grey[50],
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: _addFromInput,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: appPrimaryColor,
-                minimumSize: const Size(60, 44),
+            const SizedBox(width: 12),
+            Container(
+              height: 48,
+              width: 48,
+              decoration: BoxDecoration(
+                gradient: customLinearGradient,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text('Add'),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: _addFromInput,
+                  borderRadius: BorderRadius.circular(12),
+                  child: const Icon(Icons.add, color: Colors.white),
+                ),
+              ),
             ),
           ],
         ),
         if (widget.suggestions.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Text(
+            'Suggestions:',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[600],
+            ),
+          ),
           const SizedBox(height: 8),
           Wrap(
-            spacing: 6,
+            spacing: 8,
+            runSpacing: 8,
             children: widget.suggestions
+                .where((s) => !_current.contains(s))
                 .map(
-                  (s) => ActionChip(
-                    label: Text(s),
-                    onPressed: () {
-                      _add(s);
-                    },
+                  (s) => GestureDetector(
+                    onTap: () => _add(s),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        '+ $s',
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
                   ),
                 )
                 .toList(),

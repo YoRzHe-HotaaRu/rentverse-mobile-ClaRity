@@ -89,7 +89,10 @@ class MapPreview extends StatelessWidget {
             child: FlutterMap(
               options: MapOptions(
                 initialCenter: LatLng(lat, lon),
-                initialZoom: 14,
+                initialZoom: 15, // Slightly closer zoom for better context
+                interactionOptions: const InteractionOptions(
+                  flags: InteractiveFlag.none,
+                ),
               ),
               children: [
                 TileLayer(
@@ -102,12 +105,19 @@ class MapPreview extends StatelessWidget {
                   markers: [
                     Marker(
                       point: LatLng(lat, lon),
-                      width: 44,
-                      height: 44,
+                      width: 60,
+                      height: 60,
                       child: const Icon(
-                        Icons.location_pin,
-                        size: 44,
-                        color: Color(0xFF1CD8D2),
+                        Icons.location_on,
+                        size: 50,
+                        color: Colors.redAccent,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black38,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          )
+                        ],
                       ),
                     ),
                   ],

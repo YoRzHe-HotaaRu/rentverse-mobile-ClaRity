@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Reusable app bar used across tenant screens.
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -20,16 +21,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color effectiveBackgroundColor = backgroundColor ?? Color(0xFFEEEEEE);
+
     return AppBar(
-      backgroundColor: backgroundColor,
+      backgroundColor: effectiveBackgroundColor,
       elevation: 0,
       toolbarHeight: height,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: effectiveBackgroundColor,
+        statusBarIconBrightness:
+            effectiveBackgroundColor.computeLuminance() > 0.5
+                ? Brightness.dark
+                : Brightness.light,
+        statusBarBrightness: effectiveBackgroundColor.computeLuminance() > 0.5
+            ? Brightness.light
+            : Brightness.dark,
+      ),
       leadingWidth: 68,
       leading: Padding(
         padding: const EdgeInsets.only(left: 10, top: 6, bottom: 6),
         child: CircleAvatar(
           radius: 24,
-          backgroundColor: Colors.grey.shade200,
+          backgroundColor: Color(0xFFEEEEEE),
           child: Text(
             displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U',
             style: const TextStyle(

@@ -1,5 +1,4 @@
-//lib/main.dart
-
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rentverse/common/bloc/auth/auth_cubit.dart';
@@ -42,6 +41,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => sl<NavigationCubit>()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
           scaffoldBackgroundColor: appBackgroundColor,

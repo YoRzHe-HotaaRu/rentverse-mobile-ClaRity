@@ -3,10 +3,10 @@ import 'package:rentverse/common/colors/custom_color.dart';
 import 'package:rentverse/common/screen/navigation_container.dart';
 import 'package:rentverse/core/services/service_locator.dart';
 import 'package:rentverse/features/auth/presentation/pages/profile_pages.dart';
-import 'package:rentverse/role/tenant/presentation/pages/nav/chat.dart';
-import 'package:rentverse/role/tenant/presentation/pages/nav/home.dart';
-import 'package:rentverse/role/tenant/presentation/pages/property/property.dart';
-import 'package:rentverse/role/tenant/presentation/pages/nav/rent.dart';
+import 'package:rentverse/features/tenant_home/presentation/pages/nav/chat_page.dart';
+import 'package:rentverse/features/tenant_home/presentation/pages/nav/home_page.dart';
+import 'package:rentverse/features/tenant_home/presentation/pages/nav/property_page.dart';
+import 'package:rentverse/features/tenant_home/presentation/pages/nav/rent_page.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 Future<void> main() async {
@@ -14,7 +14,6 @@ Future<void> main() async {
   await setupServiceLocator();
   runApp(const MyTestApp());
 }
-
 
 class MyTestApp extends StatelessWidget {
   const MyTestApp({super.key});

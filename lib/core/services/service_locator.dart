@@ -1,5 +1,3 @@
-
-
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/web.dart';
@@ -76,10 +74,10 @@ import 'package:rentverse/features/review/domain/repository/review_repository.da
 import 'package:rentverse/features/review/domain/usecase/submit_review_usecase.dart';
 import 'package:rentverse/features/review/domain/usecase/get_property_reviews_usecase.dart';
 import 'package:rentverse/core/network/open_map_street_api.dart';
-import 'package:rentverse/role/lanlord/data/source/landlord_dashboard_api_service.dart';
-import 'package:rentverse/role/lanlord/data/repository/landlord_dashboard_repository_impl.dart';
-import 'package:rentverse/role/lanlord/domain/repository/landlord_dashboard_repository.dart';
-import 'package:rentverse/role/lanlord/domain/usecase/get_landlord_dashboard_usecase.dart';
+import 'package:rentverse/features/landlord_dashboard/data/source/landlord_dashboard_api_service.dart';
+import 'package:rentverse/features/landlord_dashboard/data/repository/landlord_dashboard_repository_impl.dart';
+import 'package:rentverse/features/landlord_dashboard/domain/repository/landlord_dashboard_repository.dart';
+import 'package:rentverse/features/landlord_dashboard/domain/usecase/get_landlord_dashboard_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rentverse/features/disputes/data/source/disputes_api_service.dart';
 import 'package:rentverse/features/disputes/data/repository/disputes_repository_impl.dart';
@@ -118,7 +116,6 @@ Future<void> setupServiceLocator() async {
     () => ChatSocketService(sl<Logger>(), sl()),
   );
 
-
   sl.registerLazySingleton<ReviewApiService>(
     () => ReviewApiServiceImpl(sl<DioClient>()),
   );
@@ -130,14 +127,12 @@ Future<void> setupServiceLocator() async {
     () => GetPropertyReviewsUseCase(sl<ReviewRepository>()),
   );
 
-
   sl.registerLazySingleton<AuthLocalDataSource>(
     () => AuthLocalDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<AuthApiService>(
     () => AuthApiServiceImpl(sl<DioClient>()),
   );
-
 
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(sl<AuthApiService>(), sl<AuthLocalDataSource>()),
@@ -215,7 +210,6 @@ Future<void> setupServiceLocator() async {
     () => MidtransRepositoryImpl(sl<MidtransApiService>()),
   );
 
-
   sl.registerLazySingleton(() => GetLocalUserUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => IsLoggedInUsecase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => LoginUseCase(sl<AuthRepository>()));
@@ -270,7 +264,6 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton(
     () => GetLandlordDashboardUseCase(sl<LandlordDashboardRepository>()),
   );
-
 
   sl.registerLazySingleton(() => AuthCubit());
 }

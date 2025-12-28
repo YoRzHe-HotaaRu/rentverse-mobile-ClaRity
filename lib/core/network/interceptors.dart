@@ -16,11 +16,9 @@ class DioInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-
     _logger.i('--> ${options.method.toUpperCase()} ${options.uri}');
     _logger.t('Headers: ${options.headers}');
     _logger.t('Body: ${options.data}');
-
 
     final path = options.path;
     if (path.contains('/auth/refresh') ||
@@ -29,21 +27,17 @@ class DioInterceptor extends Interceptor {
       return super.onRequest(options, handler);
     }
 
-
     final token = _sharedPreferences.getString(ApiConstants.tokenKey);
-
 
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }
-
 
     super.onRequest(options, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-
     _logger.d('<-- ${response.statusCode} ${response.requestOptions.uri}');
     _logger.t('Data: ${response.data}');
 
@@ -52,7 +46,6 @@ class DioInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-
     _logger.e('<-- ${err.response?.statusCode} ${err.requestOptions.uri}');
     _logger.e('Message: ${err.message}');
     _logger.e('Error Data: ${err.response?.data}');
@@ -85,34 +78,27 @@ class DioInterceptor extends Interceptor {
       final newToken = await _refreshToken();
 
       if (newToken == null || newToken.isEmpty) {
-
         _logger.w('Token refresh failed, propagating 401');
         return handler.next(err);
       }
-
 
       final opts = err.requestOptions;
       opts.headers['Authorization'] = 'Bearer $newToken';
       opts.extra['__retry'] = true;
 
-
       final response = await _dio.fetch(opts);
       handler.resolve(response);
     } catch (e) {
-
       handler.next(err);
     }
   }
 
   Future<String?> _refreshToken() {
-
     final existing = _refreshFuture;
     if (existing != null) return existing;
 
     final future = (() async {
       try {
-
-
         final authRepo = sl<AuthRepository>();
         final result = await authRepo.refreshToken();
 
@@ -120,7 +106,8 @@ class DioInterceptor extends Interceptor {
           _logger.i('Token refreshed successfully via AuthRepository');
           return result.data;
         } else {
-          _logger.e('AuthRepository.refreshToken failed: ${result.error?.message}');
+          _logger.e(
+              'AuthRepository.refreshToken failed: ${result.error?.message}');
           return null;
         }
       } catch (e) {

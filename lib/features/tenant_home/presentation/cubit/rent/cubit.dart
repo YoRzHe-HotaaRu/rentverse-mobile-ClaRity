@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+import 'package:dio/dio.dart';
+import 'package:rentverse/core/utils/error_utils.dart';
 import 'package:rentverse/features/bookings/domain/entity/res/booking_list_entity.dart';
 import 'package:rentverse/features/bookings/domain/usecase/get_bookings_usecase.dart';
 import 'package:rentverse/features/midtrans/domain/entity/midtrans_entity.dart';
@@ -8,7 +10,7 @@ import 'package:rentverse/features/tenant_home/presentation/cubit/rent/state.dar
 
 class RentCubit extends Cubit<RentState> {
   RentCubit(this._getBookingsUseCase, this._payInvoiceUseCase)
-    : super(const RentState());
+      : super(const RentState());
 
   final GetBookingsUseCase _getBookingsUseCase;
   final PayInvoiceUseCase _payInvoiceUseCase;
@@ -47,7 +49,8 @@ class RentCubit extends Cubit<RentState> {
       );
     } catch (e) {
       Logger().e('Load bookings failed', error: e);
-      emit(state.copyWith(isLoading: false, error: e.toString()));
+      final msg = e is DioException ? resolveApiErrorMessage(e) : e.toString();
+      emit(state.copyWith(isLoading: false, error: msg));
     }
   }
 
@@ -59,7 +62,8 @@ class RentCubit extends Cubit<RentState> {
       return res;
     } catch (e) {
       Logger().e('Pay invoice failed', error: e);
-      emit(state.copyWith(isPaying: false, error: e.toString()));
+      final msg = e is DioException ? resolveApiErrorMessage(e) : e.toString();
+      emit(state.copyWith(isPaying: false, error: msg));
       return null;
     }
   }

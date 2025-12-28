@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:rentverse/core/utils/error_utils.dart';
 import 'package:rentverse/features/wallet/domain/usecase/get_wallet_usecase.dart';
 import 'package:rentverse/features/wallet/presentation/cubit/state.dart';
 
@@ -13,10 +15,11 @@ class WalletCubit extends Cubit<WalletState> {
       final wallet = await _getWalletUseCase.call();
       emit(state.copyWith(status: WalletStatus.success, wallet: wallet));
     } catch (e) {
+      final msg = e is DioException ? resolveApiErrorMessage(e) : e.toString();
       emit(
         state.copyWith(
           status: WalletStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: msg,
         ),
       );
     }
@@ -27,10 +30,11 @@ class WalletCubit extends Cubit<WalletState> {
       final wallet = await _getWalletUseCase.call();
       emit(state.copyWith(status: WalletStatus.success, wallet: wallet));
     } catch (e) {
+      final msg = e is DioException ? resolveApiErrorMessage(e) : e.toString();
       emit(
         state.copyWith(
           status: WalletStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: msg,
         ),
       );
     }

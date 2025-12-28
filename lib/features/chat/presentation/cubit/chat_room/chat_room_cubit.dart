@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:rentverse/core/utils/error_utils.dart';
 import 'package:rentverse/features/chat/data/models/chat_message_model.dart';
 import 'package:rentverse/features/chat/data/source/chat_socket_service.dart';
 import 'package:rentverse/features/chat/domain/entity/chat_message_entity.dart';
@@ -14,11 +16,10 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     this._socketService, {
     NotificationService? notificationService,
     required this.currentUserId,
-  }) : _notificationService = notificationService,
-       super(const ChatRoomState());
+  })  : _notificationService = notificationService,
+        super(const ChatRoomState());
 
   final GetMessagesUseCase _getMessagesUseCase;
-
 
   final ChatSocketService _socketService;
   final NotificationService? _notificationService;
@@ -59,7 +60,8 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(status: ChatRoomStatus.failure, error: e.toString()));
+      final msg = e is DioException ? resolveApiErrorMessage(e) : e.toString();
+      emit(state.copyWith(status: ChatRoomStatus.failure, error: msg));
     }
   }
 
@@ -67,12 +69,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     _socketSubscription?.cancel();
     _socketSubscription = _socketService.messageStream.listen((raw) {
       try {
-
-
         print('CHAT_ROOM SOCKET RAW room=$roomId payload=$raw');
-
-
-
 
         final raws = <Map<String, dynamic>>[];
         final payload = raw['data'] ?? raw;
@@ -94,7 +91,6 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             final message = model.toEntity(currentUserId: currentUserId);
             if (message.roomId != roomId) continue;
 
-
             final exists = current.any((m) => m.id == message.id);
             if (exists) continue;
 
@@ -104,9 +100,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             print(
               'CHAT_ROOM NEW_MESSAGE room=${message.roomId} id=${message.id} content=${message.content} at=${message.createdAt.toIso8601String()}',
             );
-          } catch (_) {
-
-          }
+          } catch (_) {}
         }
 
         if (added) {
@@ -125,7 +119,6 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
     emit(state.copyWith(sending: true, error: null));
 
-
     final optimistic = ChatMessageEntity(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       roomId: roomId,
@@ -140,10 +133,10 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     emit(state.copyWith(messages: updated, status: ChatRoomStatus.success));
 
     try {
-
       _socketService.sendMessage(roomId, content);
     } catch (e) {
-      emit(state.copyWith(error: e.toString()));
+      final msg = e is DioException ? resolveApiErrorMessage(e) : e.toString();
+      emit(state.copyWith(error: msg));
     } finally {
       emit(state.copyWith(sending: false));
     }
@@ -180,9 +173,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           'CHAT_ROOM NOTIF NEW_MESSAGE room=${message.roomId} id=${message.id} content=${message.content} at=${message.createdAt.toIso8601String()}',
         );
         emit(state.copyWith(messages: current, status: ChatRoomStatus.success));
-      } catch (_) {
-
-      }
+      } catch (_) {}
     });
   }
 }

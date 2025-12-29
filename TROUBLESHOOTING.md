@@ -137,8 +137,20 @@ I/flutter: │  Headers: {Accept: application/json, Content-Type: application/js
 I/flutter: │ 🐛 <-- 200 https://rvapi.ilhamdean.cloud/api/v1/auth/me
 ```
 
+---
 
-## Summary
+## Screenshots
+
+**Homepage after successful login:**
+
+![After Login - Homepage](./screenshots/After_login_Homepage.jpg)
+
+**Profile page showing logged-in user:**
+
+![Logged In - Profile Page](./screenshots/Logged_In_ProfilePage.jpg)
+
+---
+
 
 | Issue | Root Cause | File | Line |
 |-------|------------|------|------|
